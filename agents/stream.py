@@ -13,7 +13,6 @@ import json
 import re
 from datetime import datetime, timezone
 
-from langchain.chat_models import init_chat_model
 from langchain.agents.middleware import (
     ModelRetryMiddleware,
     ToolRetryMiddleware,
@@ -21,6 +20,7 @@ from langchain.agents.middleware import (
 )
 from langchain_core.messages import AIMessageChunk, ToolMessage
 from langchain_core.tools import StructuredTool
+from langchain_openai import ChatOpenAI
 from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 
@@ -52,9 +52,8 @@ def _get_model(env: dict[str, str]):
     global _model
     if _model is None:
         logger.log("Initializing model...")
-        _model = init_chat_model(
+        _model = ChatOpenAI(
             model=env["AI_GATEWAY_MODEL"],
-            model_provider="openai",
             api_key=env["AI_GATEWAY_API_KEY"],
             base_url=env["AI_GATEWAY_BASE_URL"],
             temperature=0,
