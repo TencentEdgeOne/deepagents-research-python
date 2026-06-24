@@ -52,12 +52,16 @@ def _get_model(env: dict[str, str]):
     global _model
     if _model is None:
         logger.log("Initializing model...")
+        model_id = env["AI_GATEWAY_MODEL"]
+        # DeepSeek models support thinking/reasoning; disable via extra_body
+        extra_body = {"thinking": {"type": "disabled"}} if "deepseek" in model_id.lower() else None
         _model = ChatOpenAI(
-            model=env["AI_GATEWAY_MODEL"],
+            model=model_id,
             api_key=env["AI_GATEWAY_API_KEY"],
             base_url=env["AI_GATEWAY_BASE_URL"],
             temperature=0,
             timeout=300,
+            extra_body=extra_body,
         )
     return _model
 
